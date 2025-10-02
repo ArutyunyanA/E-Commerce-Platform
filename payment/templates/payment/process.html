@@ -1,0 +1,79 @@
+{% extends 'webshop/base.html' %}
+{% load static %}
+
+{% block title %}Payment Order{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <!-- Page Heading -->
+                <h2 class="fw-bold mb-4 text-center">
+                    <i class="bi bi-cart-check-fill text-primary me-2"></i>
+                    Order Summary
+                </h2>
+
+                <!-- Order Table -->
+                <div class="table-responsive shadow-sm rounded-3">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col"><i class="bi bi-image me-1"></i> Image</th>
+                                <th scope="col"><i class="bi bi-box-seam me-1"></i> Product</th>
+                                <th scope="col"><i class="bi bi-cash me-1"></i> Price</th>
+                                <th scope="col"><i class="bi bi-123 me-1"></i> Qty</th>
+                                <th scope="col"><i class="bi bi-calculator me-1"></i> Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td style="width: 90px;">
+                                    <img src="{% if item.product.image %}{{ item.product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" 
+                                        alt="Product image" class="img-fluid rounded border" style="max-height: 70px;">
+                                </td>
+                                <td>{{ item.product.name }}</td>
+                                <td class="fw-semibold">${{ item.price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td class="fw-bold text-end">${{ item.get_cost_with_discount_and_vat|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+
+                            {% if order.coupon %}
+                            <tr class="table-warning">
+                                <td colspan="4" class="text-end">
+                                    <i class="bi bi-ticket-perforated me-2"></i>
+                                    Coupon: <strong>"{{ order.coupon.code }}"</strong> ({{ order.discount }}% off)
+                                </td>
+                                <td class="text-danger fw-bold">- ${{ order.get_discount|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="text-end fw-semibold">Subtotal</td>
+                                <td class="fw-semibold">${{ order.get_total_cost|floatformat:2 }}</td>
+                            </tr>
+                            {% endif %}
+
+                            <tr class="table-primary">
+                                <td colspan="4" class="text-end fw-bold">
+                                    <i class="bi bi-currency-dollar me-2"></i> Total
+                                </td>
+                                <td class="fw-bold fs-5">${{ order.get_total_cost_incl_vat|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Payment Form -->
+                <form action="{% url 'payment:process' %}" method="post" class="mt-4">
+                    {% csrf_token %}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-lg btn-success shadow">
+                            <i class="bi bi-credit-card-fill me-2"></i> Pay Now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

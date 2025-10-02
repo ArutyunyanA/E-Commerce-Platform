@@ -1,0 +1,74 @@
+{% extends 'webshop/base.html' %}
+
+{% block title %}
+    Checkout
+{% endblock %}
+
+{% block content %}
+    <div class="container my-5">
+        <!-- Заголовок -->
+        <div class="text-center mb-4">
+            <h1 class="fw-bold">
+                <i class="bi bi-credit-card-fill me-2"></i> Checkout
+            </h1>
+            <p class="text-muted">Please fill in your details to complete your order</p>
+        </div>
+
+        <div class="row">
+            <!-- Форма заказа -->
+            <div class="col-lg-7 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h2 class="h5 mb-0"><i class="bi bi-person-lines-fill me-2"></i>Billing Information</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+                                <i class="bi bi-check2-circle me-2"></i> Place Order
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Информация о заказе -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h2 class="h5 mb-0"><i class="bi bi-cart-check me-2"></i>Your Order</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush mb-3">
+                            {% for item in cart %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="fw-semibold">{{ item.quantity }} × {{ item.product.name }}</span>
+                                    </div>
+                                    <span class="fw-bold">€{{ item.total_price_excl_vat|floatformat:2 }}</span>
+                                </li>
+                            {% endfor %}
+                            {% if cart.coupon %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center text-success">
+                                    <span>
+                                        <i class="bi bi-ticket-perforated me-2"></i>Coupon "{{ cart.coupon.code }}" 
+                                        ({{ cart.coupon.discount }}% off)
+                                    </span>
+                                    <span>- €{{ cart.get_discount|floatformat:2 }}</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <div class="d-flex justify-content-between border-top pt-3">
+                            <div class="fw-bold fs-5">Total:</div>
+                            <div class="total-right">
+                              <div class="fw-bold fs-5 text-primary">€{{ cart.get_total_incl_vat|floatformat:2 }}</div>
+                              <small>incl. €{{ cart.get_vat_amount|floatformat:2 }} VAT</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

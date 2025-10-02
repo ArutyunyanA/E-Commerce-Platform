@@ -1,0 +1,78 @@
+{% extends 'webshop/base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ product.name }}
+{% endblock %}
+
+{% block content %}
+    <div class="container my-4">
+        <div class="row">
+            <!-- PRODUCT IMAGE -->
+            <div class="col-md-5 text-center">
+                <div class="card shadow-sm p-3">
+                    <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" 
+                        class="img-fluid rounded" 
+                        alt="{{ product.name }}">
+                </div>
+            </div>
+
+            <!-- PRODUCT INFO -->
+            <div class="col-md-7">
+                <h2 class="mb-2">{{ product.name }}</h2>
+                <h6 class="text-muted mb-3">
+                    <a href="{{ product.category.get_absolute_url }}" class="text-decoration-none">
+                        <i class="bi bi-tag"></i> {{ product.category }}
+                    </a>
+                </h6>
+
+                <h4 class="text-primary fw-bold mb-3">
+                    €{{ product.get_price_incl_vat|floatformat:2 }}
+                    <small class="text-muted">incl. {{ product.vat_rate }}% VAT</small>
+                </h4>
+
+                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="d-flex align-items-center mb-4">
+                    {% csrf_token %}
+                    <div class="me-2">
+                        {{ cart_product_form }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-cart-plus"></i> Add to cart
+                    </button>
+                </form>
+
+                <p class="text-secondary">{{ product.description|linebreaks }}</p>
+            </div>
+        </div>
+
+        {% if recom_prod %}
+        <!-- RECOMMENDATIONS -->
+        <div class="mt-5">
+            <h4 class="mb-3"><i class="bi bi-stars"></i> You may also like</h4>
+            <div class="row row-cols-2 row-cols-md-4 g-3">
+                {% for p in recom_prod %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <a href="{{ p.get_absolute_url }}">
+                            <img src="{% if p.image %}{{ p.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" 
+                                class="card-img-top img-fluid" alt="{{ p.name }}">
+                        </a>
+                        <div class="card-body p-2 d-flex flex-column">
+                            <h6 class="card-title mb-1">
+                                <a href="{{ p.get_absolute_url }}" class="text-decoration-none text-dark small">
+                                    {{ p.name|truncatewords:5 }}
+                                </a>
+                            </h6>
+                            <span class="text-primary fw-bold small">
+                                ${{ p.get_price_incl_vat|floatformat:2 }}
+                                <small class="text-muted">incl. {{ p.vat_rate }}% VAT</small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
