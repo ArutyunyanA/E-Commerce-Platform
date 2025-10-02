@@ -6,7 +6,6 @@ This repository implements a modular architecture (accounts, products, cart, ord
 
 In addition, the system **calculates VAT (Value Added Tax)** dynamically during checkout, ensuring compliance with taxation rules for European and international markets.  
 
-> Note: earlier documentation mistakenly referenced SQLite — this project uses **PostgreSQL** as the canonical database.  
 
 ---
 
