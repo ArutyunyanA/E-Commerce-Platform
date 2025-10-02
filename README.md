@@ -4,6 +4,8 @@
 A production-ready e-commerce web application built with **Django** and styled with **Bootstrap**.  
 This repository implements a modular architecture (accounts, products, cart, orders, payments, coupons, webshop), integrates **Stripe** for payments, uses **PostgreSQL** as the primary data store, and relies on **Celery + RabbitMQ** for background processing and **Redis** for analytics / activity tracking and recommendation features.
 
+In addition, the system **calculates VAT (Value Added Tax)** dynamically during checkout, ensuring compliance with taxation rules for European and international markets.  
+
 > Note: earlier documentation mistakenly referenced SQLite — this project uses **PostgreSQL** as the canonical database.  
 
 ---
